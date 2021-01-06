@@ -7,10 +7,13 @@ import (
 )
 
 type Config struct {
-	Facebook struct {
-		Token  string `json:"token"`
-		PageId string `json:"pageid"`
-	} `json:"facebook"`
+	Inputdir   string `json:"inputdir"`
+	Outdir     string `json:"outdir"`
+	Fontsdir   string `json:"fontsdir"`
+	Archivedir string `json:"archivedir"`
+	Fontname   string `json:"fontname"`
+	Contentdir string `json:"contentdir"`
+	Imagefile  string `json:"imagefile"`
 }
 
 func loadConf(path string) Config {

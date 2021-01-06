@@ -26,7 +26,6 @@ func fbPublishPhoto(postimage string) (id string, err error) {
 		"source":       file,
 	})
 	if err != nil {
-		log.Println(err)
 		return
 	}
 	err = res.DecodeField("post_id", &id)

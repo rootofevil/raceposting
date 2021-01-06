@@ -1,0 +1,9 @@
+{
+    "inputdir": "input",
+    "outdir": "out",
+    "fontsdir": "fonts",
+    "archivedir": "archive",
+    "fontname": "arial.ttf",
+    "contentdir": "content",
+    "imagefile": "logo.jpg"
+}

@@ -29,13 +29,31 @@ func main() {
 	var fontsdir string
 	var archivedir string
 	var fontname string
+	var contentdir string
+	var imagefile string
 
-	flag.StringVar(&inputdir, "inputdir", "input", "Dir with source files (pdf)")
-	flag.StringVar(&outdir, "outdir", "out", "Dir for image output")
-	flag.StringVar(&fontsdir, "fontsdir", "fonts", "Dir with fonts")
-	flag.StringVar(&archivedir, "archivedir", "archive", "Dir where to archive files")
-	flag.StringVar(&fontname, "fontname", "arial.ttf", "Font filename")
+	// flag.StringVar(&inputdir, "inputdir", "input", "Dir with source files (pdf)")
+	// flag.StringVar(&outdir, "outdir", "out", "Dir for image output")
+	// flag.StringVar(&fontsdir, "fontsdir", "fonts", "Dir with fonts")
+	// flag.StringVar(&archivedir, "archivedir", "archive", "Dir where to archive files")
+	// flag.StringVar(&fontname, "fontname", "arial.ttf", "Font filename")
+	// flag.StringVar(&contentdir, "contentdir", "content", "Dir with graphical content")
+	// flag.StringVar(&imagefile, "imagefile", "logo.jpg", "Name of image to add")
+	flag.StringVar(&access_token, "a", "", "Facebook Page access token")
+	flag.StringVar(&pageId, "i", "", "Facebook page ID")
 	flag.Parse()
+
+	config := loadConf("config.json")
+	// access_token = config.Facebook.Token
+	// pageId = config.Facebook.PageId
+
+	inputdir = config.Inputdir
+	outdir = config.Outdir
+	fontsdir = config.Fontsdir
+	archivedir = config.Archivedir
+	fontname = config.Fontname
+	contentdir = config.Contentdir
+	imagefile = config.Imagefile
 
 	if _, err := os.Stat(outdir); os.IsNotExist(err) {
 		err := os.Mkdir(outdir, 0700)
@@ -58,16 +76,17 @@ func main() {
 		}
 	}
 
-	fontfile := path.Join(fontsdir, "arial.ttf")
+	fontfile := path.Join(fontsdir, fontname)
 	postimage := path.Join(outdir, "out.jpg")
+	picture := path.Join(contentdir, imagefile)
 
 	if _, err := os.Stat(fontfile); os.IsNotExist(err) {
 		log.Fatal(err)
 	}
 
-	config := loadConf("config.json")
-	access_token = config.Facebook.Token
-	pageId = config.Facebook.PageId
+	if _, err := os.Stat(picture); os.IsNotExist(err) {
+		log.Fatal(err)
+	}
 
 	for {
 		files, err := ioutil.ReadDir(inputdir)
@@ -93,15 +112,16 @@ func main() {
 			// message := sessionToText(session)
 			// log.Print(message)
 			lines := sessionToLines(session)
-			prepareImage(lines, postimage, fontfile)
+			prepareImage(lines, postimage, fontfile, picture)
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
 				postId, err := fbPublishPhoto(postimage)
 				if err != nil {
 					log.Println(err)
+				} else {
+					log.Println("Published post id:", postId)
 				}
-				log.Println("Published post id:", postId)
 			}()
 			archiveFile(f.Name(), inputdir, archivedir)
 		}
@@ -134,7 +154,7 @@ func sessionToLines(session pdfParse.RaceSession) []string {
 	return lines
 }
 
-func prepareImage(text []string, out string, fontpath string) {
+func prepareImage(text []string, out string, fontpath string, imagepath string) {
 	// Read the font data.
 	fontBytes, err := ioutil.ReadFile(fontpath)
 	if err != nil {
@@ -160,7 +180,7 @@ func prepareImage(text []string, out string, fontpath string) {
 		})
 	}
 	pic.AddTextLine(" ", 6, f, text2pic.ColorBlack, text2pic.Padding{})
-	file, err := os.Open("content/logo.jpg")
+	file, err := os.Open(imagepath)
 	if err != nil {
 		fmt.Println(err)
 	}
