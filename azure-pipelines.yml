@@ -35,19 +35,18 @@ stages:
       inputs:
         command: logout
         containerRegistry: 'dockerhub'
-#- stage: 'Deploy'
-#  displayName: 'Deploy the container'
-#  dependsOn: Build
-#  jobs:
-#  - job: 'Deploy'
-#    displayName: 'Deploy job'
-#    pool:
-#      vmImage: 'ubuntu-18.04'
-#    variables:
-#    - group: Release
-#    steps:
-#    - task: AzureWebAppContainer@1
-#      inputs:
-#       appName: $(WebAppName)
-#       azureSubscription: 'Resource Manager - Tailspin - Space Game'
-#       imageName: $(RegistryName)/$(webRepository):$(build.buildId)
+- stage: 'Deploy'
+  displayName: 'Deploy the container'
+  dependsOn: Build
+  jobs:
+  - job: 'Deploy'
+    displayName: 'Deploy job'
+    pool: 'ExternalVMs'
+    variables:
+    - group: Release
+    steps:
+    - task: Bash@3
+      inputs:
+       targetType: filePath
+       filePath: ./runcontainer 
+       arguments: 
