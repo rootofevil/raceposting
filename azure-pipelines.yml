@@ -24,7 +24,6 @@ stages:
       displayName: 'Build and push the image to container registry'
       inputs:
         command: buildAndPush
-        buildContext: $(Build.Repository.LocalPath)
         repository: $(repo)
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         containerRegistry: 'dockerhub'
