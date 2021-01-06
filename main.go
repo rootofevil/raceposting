@@ -45,6 +45,9 @@ func main() {
 	flag.StringVar(&pageId, "i", "", "Facebook page ID")
 	flag.Parse()
 
+	log.Println("Auth token", access_token)
+	log.Println("Pageid", pageId)
+
 	config := loadConf("config.json")
 	// access_token = config.Facebook.Token
 	// pageId = config.Facebook.PageId
