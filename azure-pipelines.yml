@@ -43,10 +43,10 @@ stages:
     displayName: 'Deploy job'
     pool: 'ExternalVMs'
     variables:
-    - group: Release
+    - group: Stage
     steps:
     - task: Bash@3
       inputs:
        targetType: filePath
        filePath: ./runcontainer 
-       arguments: 
+       arguments: $(name) $(repo):$(tag) $(fb_token) $(fb_page) $(input) $(archive)
