@@ -1,0 +1,19 @@
+#/bin/bash
+NAME=raceposting
+INPUT=/tmp/input
+ARCHIVE=/tmp/archive
+FB_TOKEN=
+FB_PAGEID=
+DOCKER_IMAGE=raceposting:dev
+
+NAME=$1
+DOCKER_IMAGE=$2
+FB_TOKEN=$3
+FB_PAGEID=$4
+INPUT=$5
+ARCHIVE=$6
+
+docker pull $DOCKER_IMAGE
+docker stop $NAME
+docker container rm $NAME
+docker run -d --env FB_TOKEN=$FB_TOKEN --env FB_PAGEID=$FB_PAGEID -v $INPUT:/root/input -v $ARCHIVE:/root/archive --name $NAME $DOCKER_IMAGE
