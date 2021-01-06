@@ -4,9 +4,6 @@ RUN go get -d -v github.com/golang/freetype github.com/hqbobo/text2pic github.co
 COPY *.go ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o app .
 
-FROM alpine:latest as certs
-RUN apk --update add ca-certificates
-
 FROM alpine:latest  
 RUN apk --no-cache add ca-certificates
 WORKDIR /root
