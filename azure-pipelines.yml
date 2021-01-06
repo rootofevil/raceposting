@@ -3,7 +3,7 @@ trigger:
 
 variables:
   buildConfiguration: 'Release'
-  repo: 'raceposting'
+  repo: 'rootofevil2009/raceposting'
   tag: '$(Build.BuildId)'
 
 stages:
@@ -23,18 +23,12 @@ stages:
     - task: Docker@2
       displayName: 'Build image'
       inputs:
-        command: build
+        command: buildAndPush
         repository: $(repo)
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         containerRegistry: 'dockerhub'
         tags: |
           $(tag)
-    - task: Docker@2
-      displayName: 'Push image to registry'
-      inputs:
-        command: push
-        repository: $(repo)
-        containerRegistry: 'dockerhub'
 
     - task: Docker@2
       displayName: Logout from ACR
