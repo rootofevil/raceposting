@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -32,6 +33,7 @@ func main() {
 	var contentdir string
 	var imagefile string
 
+	log.Println("Start, begin to pick up parameters")
 	// flag.StringVar(&inputdir, "inputdir", "input", "Dir with source files (pdf)")
 	// flag.StringVar(&outdir, "outdir", "out", "Dir for image output")
 	// flag.StringVar(&fontsdir, "fontsdir", "fonts", "Dir with fonts")
@@ -88,6 +90,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Println("Starting to listen files")
+
 	for {
 		files, err := ioutil.ReadDir(inputdir)
 		if err != nil {
@@ -99,7 +103,10 @@ func main() {
 		for _, f := range files {
 			if !r.MatchString(f.Name()) {
 				log.Println("Wrong file:", f.Name())
-				archiveFile(f.Name(), inputdir, archivedir)
+				err = archiveFile(f.Name(), inputdir, archivedir)
+				if err != nil {
+					log.Println(err)
+				}
 				continue
 			}
 			log.Println("Processing file:", f.Name())
@@ -123,7 +130,10 @@ func main() {
 					log.Println("Published post id:", postId)
 				}
 			}()
-			archiveFile(f.Name(), inputdir, archivedir)
+			err = archiveFile(f.Name(), inputdir, archivedir)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 		wg.Wait()
 		time.Sleep(5000 * time.Millisecond)
@@ -205,10 +215,29 @@ func prepareImage(text []string, out string, fontpath string, imagepath string) 
 	}
 }
 
-func archiveFile(name, inputdir, archivedir string) {
-	err := os.Rename(path.Join(inputdir, name), path.Join(archivedir, name))
+func archiveFile(name, inputdir, archivedir string) (err error) {
+	log.Println("Moving to archive:", name)
+	sourcePath := path.Join(inputdir, name)
+	destPath := path.Join(archivedir, name)
+	inputFile, err := os.Open(sourcePath)
 	if err != nil {
-		log.Println(err)
+		return fmt.Errorf("Couldn't open source file: %s", err)
 	}
-	log.Println("Moved to archive:", name)
+	outputFile, err := os.Create(destPath)
+	if err != nil {
+		inputFile.Close()
+		return fmt.Errorf("Couldn't open dest file: %s", err)
+	}
+	defer outputFile.Close()
+	_, err = io.Copy(outputFile, inputFile)
+	inputFile.Close()
+	if err != nil {
+		return fmt.Errorf("Writing to output file failed: %s", err)
+	}
+	// The copy was successful, so now delete the original file
+	err = os.Remove(sourcePath)
+	if err != nil {
+		return fmt.Errorf("Failed removing original file: %s", err)
+	}
+	return nil
 }
