@@ -21,7 +21,7 @@ stages:
         command: login
         containerRegistry: 'dockerhub'
     - task: Docker@2
-      displayName: 'Build and push the image to container registry'
+      displayName: 'Build image'
       inputs:
         command: build
         repository: $(repo)
@@ -29,6 +29,13 @@ stages:
         containerRegistry: 'dockerhub'
         tags: |
           $(tag)
+    - task: Docker@2
+      displayName: 'Push image to registry'
+      inputs:
+        command: push
+        repository: $(repo)
+        containerRegistry: 'dockerhub'
+
     - task: Docker@2
       displayName: Logout from ACR
       inputs:
