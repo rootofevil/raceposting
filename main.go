@@ -8,10 +8,11 @@ import (
 	"log"
 	"os"
 	"path"
-	"pdfParse"
 	"regexp"
 	"sync"
 	"time"
+
+	pdfParse "github.com/rootofevil/lapsnapperpdfparse"
 
 	"github.com/golang/freetype"
 	"github.com/hqbobo/text2pic"
