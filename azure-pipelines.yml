@@ -35,7 +35,7 @@ stages:
       inputs:
         command: logout
         containerRegistry: 'dockerhub'
-- stage: 'Deploy to Stage'
+- stage: 'DeployToStage'
   displayName: 'Deploy the container'
   dependsOn: Build
   jobs:
@@ -60,9 +60,9 @@ stages:
       inputs:
         command: logout
         containerRegistry: 'dockerhub'
-- stage: 'Deploy to Prod'
-  displayName: 'Deploy the container'
-  dependsOn: Deploy to Stage
+- stage: 'DeployToProd'
+  displayName: 'Deploy the container to Prod'
+  dependsOn: DeployToStage
   jobs:
   - job: 'Deploy'
     displayName: 'Deploy job'
