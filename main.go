@@ -117,6 +117,7 @@ func main() {
 			session, err := pdfParse.ReadPdf(inputfile)
 			if err != nil {
 				log.Println(err)
+				continue
 			}
 
 			// message := sessionToText(session)
