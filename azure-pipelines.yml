@@ -35,8 +35,8 @@ stages:
       inputs:
         command: logout
         containerRegistry: 'dockerhub'
-- stage: 'Deploy'
-  displayName: 'Deploy the container'
+- stage: 'DeployToStage'
+  displayName: 'Deploy To Stage'
   dependsOn: Build
   jobs:
   - job: 'Deploy'
@@ -60,3 +60,32 @@ stages:
       inputs:
         command: logout
         containerRegistry: 'dockerhub'
+- stage: 'DeployToProd'
+  displayName: 'Deploy to Prod'
+  dependsOn: DeployToStage
+  jobs:
+  - deployment: 'Deploy'
+    environment: release
+    displayName: 'Deploy job'
+    pool: 'ExternalVMs'
+    variables:
+    - group: Prod
+    strategy:
+      runOnce:    #rolling, canary are the other strategies that are supported
+        deploy:
+          steps:
+          - task: Docker@2
+            displayName: Login to ACR
+            inputs:
+              command: login
+              containerRegistry: 'dockerhub'
+          - task: Bash@3
+            inputs:
+              targetType: filePath
+              filePath: ./runcontainer 
+              arguments: $(name) $(repo):$(tag) $(fb_token) $(fb_page) $(input) $(archive)
+          - task: Docker@2
+            displayName: Logout from ACR
+            inputs:
+              command: logout
+              containerRegistry: 'dockerhub'
