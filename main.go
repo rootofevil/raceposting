@@ -96,7 +96,13 @@ func main() {
 	log.Println("Starting to listen files")
 
 	for {
-		files, err := ioutil.ReadDir(inputdir)
+		currentTime := time.Now()
+		currentdate := currentTime.Format("2006-01-02")
+		currentdir := path.Join(inputdir, currentdate)
+		if _, err := os.Stat(currentdir); os.IsNotExist(err) {
+			continue
+		}
+		files, err := ioutil.ReadDir(currentdir)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -106,14 +112,14 @@ func main() {
 		for _, f := range files {
 			if !r.MatchString(f.Name()) {
 				log.Println("Wrong file:", f.Name())
-				err = archiveFile(f.Name(), inputdir, archivedir)
+				err = archiveFile(f.Name(), currentdir, archivedir)
 				if err != nil {
 					log.Println(err)
 				}
 				continue
 			}
 			log.Println("Processing file:", f.Name())
-			inputfile := path.Join(inputdir, f.Name())
+			inputfile := path.Join(currentdir, f.Name())
 			session, err := pdfParse.ReadPdf(inputfile)
 			if err != nil {
 				log.Println(err)
@@ -134,7 +140,7 @@ func main() {
 					log.Println("Published post id:", postId)
 				}
 			}()
-			err = archiveFile(f.Name(), inputdir, archivedir)
+			err = archiveFile(f.Name(), currentdir, archivedir)
 			if err != nil {
 				log.Println(err)
 			}
