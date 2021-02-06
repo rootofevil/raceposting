@@ -2,3 +2,5 @@ archive/*
 input/*
 facebook.json
 .vscode
+__debug_bin
+out/out.jpg

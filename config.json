@@ -3,7 +3,7 @@
     "outdir": "out",
     "fontsdir": "fonts",
     "archivedir": "archive",
-    "fontname": "arial.ttf",
+    "fontname": "saxmono.ttf",
     "contentdir": "content",
     "imagefile": "logo.jpg"
 }
