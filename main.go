@@ -107,6 +107,11 @@ func main() {
 				}
 				continue
 			}
+			r, _ := regexp.Compile(`.+\.pdf$`)
+			if !r.MatchString(f.Name()) {
+				log.Println("Skip file", f.Name())
+				continue
+			}
 			log.Println("Processing file:", f.Name())
 			inputfile := path.Join(currentdir, f.Name())
 
