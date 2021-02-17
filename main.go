@@ -89,11 +89,13 @@ func main() {
 		currentdate := currentTime.Format("2006-01-02")
 		currentdir := path.Join(inputdir, currentdate)
 		if _, err := os.Stat(currentdir); os.IsNotExist(err) {
+			time.Sleep(5000 * time.Millisecond)
 			continue
 		}
 		files, err := ioutil.ReadDir(currentdir)
 		if err != nil {
 			log.Println(err)
+			time.Sleep(5000 * time.Millisecond)
 			continue
 		}
 		r, _ := regexp.Compile(`.+\.pdf`)
@@ -105,6 +107,7 @@ func main() {
 				if err != nil {
 					log.Println(err)
 				}
+				time.Sleep(5000 * time.Millisecond)
 				continue
 			}
 			log.Println("Processing file:", f.Name())
@@ -120,12 +123,14 @@ func main() {
 			rs, err := pdfParse.NewRaceSession(params)
 			if err != nil {
 				log.Println(err)
+				time.Sleep(5000 * time.Millisecond)
 				continue
 			}
 
 			err = rs.PdfToImage()
 			if err != nil {
 				log.Println(err)
+				time.Sleep(5000 * time.Millisecond)
 				continue
 			}
 			wg.Add(1)
