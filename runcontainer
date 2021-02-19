@@ -16,4 +16,4 @@ ARCHIVE=$6
 docker pull $DOCKER_IMAGE
 docker stop $NAME
 docker container rm $NAME
-docker run -d --env FB_TOKEN=$FB_TOKEN --env FB_PAGEID=$FB_PAGEID -v $INPUT:/root/input -v $ARCHIVE:/root/archive --name $NAME $DOCKER_IMAGE
+docker run --restart unless-stopped -d --env FB_TOKEN=$FB_TOKEN --env FB_PAGEID=$FB_PAGEID -v $INPUT:/root/input -v $ARCHIVE:/root/archive --name $NAME $DOCKER_IMAGE
